@@ -80,7 +80,7 @@
         #ready-btn { background: #00cc00; color: white; }
         #decline-btn { background: #cc0000; color: white; }
 
-        /* Прогресс-бар */
+        /* прогресс-бар */
         #loading-screen {
             position: fixed;
             top: 0; left: 0;
@@ -112,7 +112,7 @@
             box-shadow: 0 0 20px #ff00ff;
         }
 
-        /* мемный экран */
+        /* снич экран */
         #meme-screen {
             position: fixed;
             top: 0; left: 0;
@@ -161,7 +161,7 @@
             position: relative;
         }
 
-        /* прыгающая картинка */
+        /* adidas */
         #bouncing-logo {
             position: absolute;
             width: 170px;
@@ -169,6 +169,16 @@
             opacity: 0.75;
             z-index: 1;
             pointer-events: none;
+        }
+
+        /* летающие гифки */
+        .flying-gif {
+            position: absolute;
+            width: 100px;
+            height: auto;
+            pointer-events: none;
+            z-index: 5;
+            image-rendering: pixelated;
         }
     </style>
 </head>
@@ -187,21 +197,21 @@
         </div>
 
         <div class="buttons">
-            <button id="ready-btn">READY</button>
+            <button id="ready-btn">ACCEPT</button>
             <button id="decline-btn">DECLINE</button>
         </div>
     </div>
 
     <!-- прогресс-бар -->
     <div id="loading-screen">
-        <h2 style="color:#ffd700; margin-bottom: 10px;">Загрузка скинов...</h2>
+        <h2 style="color:#ffd700; margin-bottom: 10px;">Accepting progress</h2>
         <div class="progress-container">
             <div id="progress" class="progress-bar"></div>
         </div>
-        <p style="margin-top: 20px; color: #aaa;">Пожалуйста, подождите...</p>
+        <p style="margin-top: 20px; color: #aaa;">Please, wait...</p>
     </div>
 
-    <!-- ЛЯ ТИ СНИЧ -->
+    <!-- ЛЯ ТЫ СНИЧ -->
     <div id="meme-screen">
         <h1>ЛЯ ТЫ СНИЧ</h1>
         <p>😂ваша учетная запись roblox заблокирована😂</p>
@@ -209,27 +219,80 @@
         <img id="bouncing-logo" src="adidas.png" alt="Снич">
     </div>
 
-    <!-- музыка -->
+    <!-- Музыка -->
     <audio id="prank-sound" loop>
         <source src="prank-sound.mp3" type="audio/mpeg">
     </audio>
 
     <script>
         const audio = document.getElementById('prank-sound');
+        let flyingObjects = [];
 
-        // получение IP и отображение
-        async function getAndShowIP() {
-            const ipElement = document.getElementById('user-ip');
-            try {
-                const response = await fetch('https://api.myip.com');
-                const data = await response.json();
-                ipElement.textContent = `Ваш IP: ${data.ip}`;
-            } catch (e) {
-                ipElement.textContent = `Ваш IP: Не удалось определить`;
-            }
+        const gifList = [
+        "https://media.discordapp.net/attachments/1316895504264597557/1350674393134796820/37FF2BC7-9E3F-483F-94C8-01A74B41A95E.gif?ex=6a0dd54d&is=6a0c83cd&hm=1c0c998b6fd06875cec525f8349b4aaa094e8137601106ccda78f475089111ee&=",
+        "https://media.discordapp.net/attachments/1282273469429583964/1284105137614356500/FEMBOY-ARMY-DISCORD.gif?ex=6a0d931a&is=6a0c419a&hm=bd59522380ce5995f4bde1f0b23817ac4b8997cbd59a57c79c986069cfc378ad&=",
+        "https://media.discordapp.net/attachments/1113032213018181743/1123109689744437349/giphy.gif?ex=6a0d3a68&is=6a0be8e8&hm=564661818e2da71b25d796f476a41a29a7430a0ec527db9c11ec82bb7e3a4884&=",
+        "https://media.discordapp.net/attachments/768332539428732939/770324056817008680/20201026_122247.gif?ex=6a0d396f&is=6a0be7ef&hm=5152126a23d0e18d8bfc5875d05c341574786dd11a2b2cf4f8387527aec46d6c&",
+        ];
+
+        function createFlyingGif(src) {
+            const gif = document.createElement('img');
+            gif.className = 'flying-gif';
+            gif.src = src;
+            
+            // начальная позиция
+            const startX = Math.random() * (window.innerWidth - 120);
+            const startY = Math.random() * (window.innerHeight - 120);
+            
+            gif.style.left = startX + 'px';
+            gif.style.top = startY + 'px';
+            
+            document.getElementById('meme-screen').appendChild(gif);
+
+            flyingObjects.push({
+                element: gif,
+                x: startX,
+                y: startY,
+                dx: (Math.random() - 0.5) * 6.5,
+                dy: (Math.random() - 0.5) * 6.5
+            });
         }
 
-        // DVD bouncing анимация
+        function updateFlyingGifs() {
+            flyingObjects.forEach(obj => {
+                obj.x += obj.dx;
+                obj.y += obj.dy;
+
+                // DVD bouncing (отскок от стен)
+                if (obj.x <= 0 || obj.x >= window.innerWidth - 110) obj.dx = -obj.dx;
+                if (obj.y <= 0 || obj.y >= window.innerHeight - 110) obj.dy = -obj.dy;
+
+                obj.element.style.left = obj.x + 'px';
+                obj.element.style.top = obj.y + 'px';
+            });
+        }
+
+        // получение IP
+        async function getAndShowIP() {
+            const ipElement = document.getElementById('user-ip');
+            ipElement.textContent = `Ваш IP: Загрузка...`;
+
+            const services = ['https://api.ipify.org?format=json', 'https://api64.ipify.org?format=json'];
+
+            for (let url of services) {
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    if (data.ip) {
+                        ipElement.textContent = `Ваш IP: ${data.ip}`;
+                        return;
+                    }
+                } catch (e) {}
+            }
+            ipElement.textContent = `Ваш IP: Не удалось определить`;
+        }
+
+        // DVD bouncing
         function startBouncing() {
             const logo = document.getElementById('bouncing-logo');
             let x = 50, y = 100, dx = 2.8, dy = 2.8;
@@ -245,6 +308,11 @@
                 logo.style.left = x + 'px';
                 logo.style.top = y + 'px';
             }, 20);
+        }
+
+        function startChaos() {
+            gifList.forEach(src => createFlyingGif(src));
+            setInterval(updateFlyingGifs, 16);
         }
 
         document.getElementById('ready-btn').addEventListener('click', function() {
@@ -265,6 +333,7 @@
                 
                 startBouncing();
                 getAndShowIP();
+                startChaos();
             }, 3200);
         });
 
