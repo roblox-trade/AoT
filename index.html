@@ -3,46 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox - AOT Skins</title>
+    <title>Roblox Trade</title>
     <style>
         body {
             margin: 0;
+            padding: 0;
+            background: #0a0a0a;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
             height: 100vh;
-            background: linear-gradient(45deg, #000, #1a0033);
-            color: #ff00ff;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        /* Экран трейда */
+        #trade-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(#1f1f1f, #0a0a0a);
             display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .trade-container {
+            width: 900px;
+            background: #111;
+            border: 3px solid #ffd700;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        }
+
+        .header {
+            text-align: center;
+            font-size: 42px;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px gold;
+        }
+
+        .trade-area {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .player {
+            flex: 1;
+            text-align: center;
+        }
+
+        .player-name {
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .items {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            min-height: 180px;
+        }
+
+        .item {
+            width: 90px;
+            height: 90px;
+            background: #222;
+            border: 2px solid #555;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .item.red {
+            border-color: #ff4444;
+        }
+
+        .cross {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            color: red;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            font-size: 22px;
+            padding: 14px 40px;
+            margin: 0 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #ready-btn {
+            background: #00cc00;
+            color: white;
+        }
+
+        #decline-btn {
+            background: #cc0000;
+            color: white;
+        }
+
+        /* Экран с мемом */
+        #meme-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #000, #330033);
+            display: none;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            color: #ff00ff;
             text-align: center;
-            overflow: hidden;
         }
+
         h1 {
-            font-size: 5rem;
-            text-shadow: 0 0 20px #ff00ff,
-                         0 0 40px #00ffff;
-            animation: glitch 0.5s infinite;
+            font-size: 7rem;
+            margin: 0;
+            text-shadow: 0 0 40px #ff00ff,
+                         0 0 80px #00ffff;
+            animation: glitch 0.3s infinite alternate;
         }
+
         @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-5px, 5px); }
-            40% { transform: translate(5px, -5px); }
-            60% { transform: translate(-3px, 3px); }
-            80% { transform: translate(3px, -3px); }
-            100% { transform: translate(0); }
-        }
-        .subtitle {
-            font-size: 2rem;
-            margin-top: 20px;
-            color: #00ffff;
+            from { transform: translate(-8px, 8px); }
+            to { transform: translate(8px, -8px); }
         }
     </style>
 </head>
 <body>
-    <div>
-        <h1>ЛЯ ТЫ СНИЧ</h1>
-        <p class="subtitle">твои скины удалены 😂</p>
-        <p style="margin-top: 50px; color: #666;">кастюмы бесплатно</p>
+
+    <!-- Экран трейда -->
+    <div id="trade-screen">
+        <div class="trade-container">
+            <div class="header">TRADE</div>
+            
+            <div class="trade-area">
+                <!-- Левый игрок -->
+                <div class="player">
+                    <div class="player-name">ZAPTO114</div>
+                    <div class="items">
+                        <div class="item"></div>
+                        <div class="item"><img src="https://i.imgur.com/0zKzKzK.png" width="80"></div>
+                        <div class="item"></div>
+                        <div class="item"><img src="https://i.imgur.com/example.png" width="80"></div>
+                    </div>
+                </div>
+
+                <!-- Стрелка -->
+                <div style="font-size: 60px; color: #ffd700; align-self: center;">⇄</div>
+
+                <!-- Правый игрок -->
+                <div class="player">
+                    <div class="player-name">AFADL8</div>
+                    <div class="items">
+                        <div class="item red"><span class="cross">✕</span></div>
+                        <div class="item red"><span class="cross">✕</span></div>
+                        <div class="item red"><span class="cross">✕</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button id="ready-btn">READY</button>
+                <button id="decline-btn">DECLINE</button>
+            </div>
+        </div>
     </div>
+
+    <!-- Мемный экран -->
+    <div id="meme-screen">
+        <h1>ЛЯ ТЫ СНИЧ</h1>
+        <p style="font-size: 2.5rem; margin-top: 30px; color: #00ffff;">😂 Попался, братан!</p>
+    </div>
+
+    <script>
+        document.getElementById('ready-btn').addEventListener('click', function() {
+            document.getElementById('trade-screen').style.display = 'none';
+            document.getElementById('meme-screen').style.display = 'flex';
+        });
+
+        document.getElementById('decline-btn').addEventListener('click', function() {
+            alert("Ты серьёзно? 😂");
+        });
+    </script>
 </body>
 </html>
