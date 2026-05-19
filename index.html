@@ -12,113 +12,112 @@
             font-family: 'Segoe UI', sans-serif;
             overflow: hidden;
             height: 100vh;
-        }
-
-        /* Экран трейда */
-        #trade-screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(#1f1f1f, #0a0a0a);
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
         }
 
         .trade-container {
-            width: 900px;
+            width: 820px;
             background: #111;
             border: 3px solid #ffd700;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-        }
-
-        .header {
-            text-align: center;
-            font-size: 42px;
-            color: #ffd700;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px gold;
-        }
-
-        .trade-area {
-            display: flex;
-            justify-content: space-between;
-            gap: 30px;
-        }
-
-        .player {
-            flex: 1;
+            border-radius: 16px;
+            padding: 30px 40px;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.7);
             text-align: center;
         }
 
-        .player-name {
-            color: #fff;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
+        .header { font-size: 48px; color: #ffd700; margin-bottom: 8px; text-shadow: 0 0 15px gold; }
+        .subheader { font-size: 28px; color: #00ffaa; margin-bottom: 20px; }
+        .player-name { font-size: 32px; color: white; margin-bottom: 25px; }
 
         .items {
             display: flex;
-            gap: 12px;
             justify-content: center;
+            gap: 20px;
             flex-wrap: wrap;
-            min-height: 180px;
+            margin: 20px 0 40px;
         }
 
         .item {
-            width: 90px;
-            height: 90px;
+            width: 110px;
+            height: 110px;
             background: #222;
-            border: 2px solid #555;
-            border-radius: 8px;
-            position: relative;
+            border: 3px solid #ffd700;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .item.red {
-            border-color: #ff4444;
+        .item:hover {
+            border-color: #ffcc00;
+            box-shadow: 0 0 25px #ffd700,
+                        0 0 45px #ffaa00;
+            transform: scale(1.08);
         }
 
-        .cross {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            color: red;
-            font-size: 40px;
-            font-weight: bold;
-        }
-
-        .buttons {
-            text-align: center;
-            margin-top: 30px;
+        .item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         button {
-            font-size: 22px;
-            padding: 14px 40px;
+            font-size: 26px;
+            padding: 16px 50px;
             margin: 0 15px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
+            transition: all 0.2s ease;
         }
 
-        #ready-btn {
-            background: #00cc00;
+        button:hover {
+            transform: scale(1.12);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+
+        #ready-btn { background: #00cc00; color: white; }
+        #decline-btn { background: #cc0000; color: white; }
+
+        /* Прогресс-бар */
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
             color: white;
         }
 
-        #decline-btn {
-            background: #cc0000;
-            color: white;
+        .progress-container {
+            width: 500px;
+            height: 35px;
+            background: #333;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 25px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
         }
 
-        /* Экран с мемом */
-        #meme-screen {
-            position: absolute;
-            width: 100%;
+        .progress-bar {
             height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ffd700, #ff00ff, #ffd700);
+            transition: width 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        /* Мемный экран */
+        #meme-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: linear-gradient(45deg, #000, #330033);
             display: none;
             flex-direction: column;
@@ -126,76 +125,135 @@
             justify-content: center;
             color: #ff00ff;
             text-align: center;
+            z-index: 100;
+            overflow: hidden;
         }
 
         h1 {
-            font-size: 7rem;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-size: 7.2rem;
             margin: 0;
-            text-shadow: 0 0 40px #ff00ff,
-                         0 0 80px #00ffff;
-            animation: glitch 0.3s infinite alternate;
+            text-shadow: 0 0 40px #ff00ff, 
+                         0 0 80px #ff00ff,
+                         0 0 120px #00ffff;
+            animation: glitch 0.4s infinite alternate;
+            z-index: 10;
+            position: relative;
         }
 
         @keyframes glitch {
-            from { transform: translate(-8px, 8px); }
-            to { transform: translate(8px, -8px); }
+            from { transform: translate(-6px, 6px); }
+            to { transform: translate(6px, -6px); }
+        }
+
+        p {
+            font-size: 2.6rem;
+            margin-top: 30px;
+            color: #00ffff;
+            z-index: 10;
+            position: relative;
+        }
+
+        /* Прыгающая картинка на фоне */
+        #bouncing-logo {
+            position: absolute;
+            width: 170px;
+            height: auto;
+            opacity: 0.75;
+            z-index: 1;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- Экран трейда -->
-    <div id="trade-screen">
-        <div class="trade-container">
-            <div class="header">TRADE</div>
-            
-            <div class="trade-area">
-                <!-- Левый игрок -->
-                <div class="player">
-                    <div class="player-name">ZAPTO114</div>
-                    <div class="items">
-                        <div class="item"></div>
-                        <div class="item"><img src="https://i.imgur.com/0zKzKzK.png" width="80"></div>
-                        <div class="item"></div>
-                        <div class="item"><img src="https://i.imgur.com/example.png" width="80"></div>
-                    </div>
-                </div>
-
-                <!-- Стрелка -->
-                <div style="font-size: 60px; color: #ffd700; align-self: center;">⇄</div>
-
-                <!-- Правый игрок -->
-                <div class="player">
-                    <div class="player-name">AFADL8</div>
-                    <div class="items">
-                        <div class="item red"><span class="cross">✕</span></div>
-                        <div class="item red"><span class="cross">✕</span></div>
-                        <div class="item red"><span class="cross">✕</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="buttons">
-                <button id="ready-btn">READY</button>
-                <button id="decline-btn">DECLINE</button>
-            </div>
+    <div class="trade-container">
+        <div class="header">TRADE</div>
+        <div class="subheader">YOU RECEIVE</div>
+        <div class="player-name">from zalupix</div>
+        
+        <div class="items">
+            <div class="item"><img src="https://www.aotrvalue.com/thirdeye.png" alt="skin1"></div>
+            <div class="item"><img src="https://www.aotrvalue.com/toji.png" alt="skin2"></div>
+            <div class="item"><img src="https://www.aotrvalue.com/bfa.png" alt="skin3"></div>
+            <div class="item"><img src="https://www.aotrvalue.com/bambi.png" alt="skin4"></div>
         </div>
+
+        <div class="buttons">
+            <button id="ready-btn">ACCEPT</button>
+            <button id="decline-btn">DECLINE</button>
+        </div>
+    </div>
+
+    <!-- Прогресс-бар -->
+    <div id="loading-screen">
+        <h2 style="color:#ffd700; margin-bottom: 10px;">Загрузка скинов...</h2>
+        <div class="progress-container">
+            <div id="progress" class="progress-bar"></div>
+        </div>
+        <p style="margin-top: 20px; color: #aaa;">Пожалуйста, подождите...</p>
     </div>
 
     <!-- Мемный экран -->
     <div id="meme-screen">
         <h1>ЛЯ ТЫ СНИЧ</h1>
-        <p style="font-size: 2.5rem; margin-top: 30px; color: #00ffff;">😂 Попался, братан!</p>
+        <p>😂ваша учетная запись roblox заблокирована😂</p>
+        <img id="bouncing-logo" src="adidas.png" alt="Снич">
     </div>
 
+    <!-- Музыка -->
+    <audio id="prank-sound" loop>
+        <source src="prank-sound.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
+        const audio = document.getElementById('prank-sound');
+
+        // DVD bouncing анимация
+        function startBouncing() {
+            const logo = document.getElementById('bouncing-logo');
+            let x = 50;
+            let y = 100;
+            let dx = 2.8;
+            let dy = 2.8;
+
+            setInterval(() => {
+                x += dx;
+                y += dy;
+
+                const maxX = window.innerWidth - logo.offsetWidth - 20;
+                const maxY = window.innerHeight - logo.offsetHeight - 20;
+
+                if (x >= maxX || x <= 0) dx = -dx;
+                if (y >= maxY || y <= 0) dy = -dy;
+
+                logo.style.left = x + 'px';
+                logo.style.top = y + 'px';
+            }, 20);
+        }
+
         document.getElementById('ready-btn').addEventListener('click', function() {
-            document.getElementById('trade-screen').style.display = 'none';
-            document.getElementById('meme-screen').style.display = 'flex';
+            document.querySelector('.trade-container').style.display = 'none';
+            const loading = document.getElementById('loading-screen');
+            loading.style.display = 'flex';
+
+            setTimeout(() => {
+                document.getElementById('progress').style.width = '100%';
+            }, 100);
+
+            setTimeout(() => {
+                loading.style.display = 'none';
+                document.getElementById('meme-screen').style.display = 'flex';
+                
+                audio.volume = 0.6;
+                audio.play().catch(() => {});
+                
+                startBouncing();
+            }, 3200);
         });
 
         document.getElementById('decline-btn').addEventListener('click', function() {
-            alert("Ты серьёзно? 😂");
+            alert("😂 ПАРЕНЬ ТЫ СЕРЬЕЗНО?");
         });
     </script>
 </body>
