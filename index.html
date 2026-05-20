@@ -41,6 +41,46 @@
             margin: 20px 0 40px;
         }
 
+        .nickname-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: -10px;
+            margin-bottom: 35px;
+        }
+
+        #nickname-input {
+            width: 260px;
+            padding: 14px 18px;
+
+            background: #1b1b1b;
+            border: 3px solid #ffd700;
+            border-radius: 12px;
+
+            color: white;
+            font-size: 22px;
+            text-align: center;
+
+            outline: none;
+
+            transition:
+                border-color 0.25s ease,
+                box-shadow 0.25s ease,
+                transform 0.2s ease;
+        }
+
+        #nickname-input::placeholder {
+            color: #888;
+        }
+
+        #nickname-input:focus {
+            border-color: #ffcc00;
+            box-shadow:
+                0 0 15px rgba(255, 215, 0, 0.7),
+                0 0 35px rgba(255, 170, 0, 0.4);
+
+            transform: scale(1.03);
+        }
+
         .item {
             width: 110px;
             height: 110px;
@@ -48,7 +88,19 @@
             border: 3px solid #ffd700;
             border-radius: 12px;
             overflow: hidden;
+
             transition: all 0.3s ease;
+
+            opacity: 0;
+            transform: translateY(25px) scale(0.9);
+        }
+
+        .item.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition:
+                opacity 0.5s ease,
+                transform 0.5s ease;
         }
 
         .item:hover {
@@ -82,6 +134,21 @@
         #ready-btn { background: #00cc00; color: white; }
         #decline-btn { background: #cc0000; color: white; }
 
+        /* начальный прогресс-бар при загрузке */
+        #initial-loading {
+            transition: opacity 0.7s ease;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.97);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            color: white;
+        }
+
         /* прогресс-бар */
         #loading-screen {
             position: fixed;
@@ -110,7 +177,7 @@
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, #ffd700, #ff00ff, #ffd700);
-            transition: width 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: width 2.8s cubic-bezier(0.25, 0.1, 0.25, 1);
             box-shadow: 0 0 20px #ff00ff;
         }
 
@@ -186,16 +253,31 @@
 </head>
 <body>
 
-    <div class="trade-container">
+    <!-- начальный прогресс-бар -->
+    <div id="initial-loading">
+        <h2 style="color:#ffd700; margin-bottom: 10px;">Checking available skins...</h2>
+        <div class="progress-container">
+            <div id="initial-progress" class="progress-bar"></div>
+        </div>
+        <p style="margin-top: 20px; color: #aaa;">Проверка доступных скинов, пожалуйста подождите</p>
+    </div>
+
+    <div class="trade-container" id="trade-container" style="display: none;">
         <div class="header">TRADE</div>
-        <div class="subheader">YOU RECEIVE</div>
-        <div class="player-name">from AoTR Developer</div>
+        <div class="subheader">YOU RECEIVE FROM</div>
+        <div class="player-name">AOTR_Developer</div>
         
-        <div class="items">
-            <div class="item"><img src="https://www.aotrvalue.com/thirdeye.png" alt="skin1"></div>
-            <div class="item"><img src="https://www.aotrvalue.com/toji.png" alt="skin2"></div>
-            <div class="item"><img src="https://www.aotrvalue.com/bfa.png" alt="skin3"></div>
-            <div class="item"><img src="https://www.aotrvalue.com/bambi.png" alt="skin4"></div>
+        <div class="items" id="random-items">
+            <!-- картинки загружаются через js -->
+        </div>
+
+        <div class="nickname-wrapper">
+            <input 
+                type="text" 
+                id="nickname-input" 
+                placeholder="Enter your nickname"
+                maxlength="20"
+            >
         </div>
 
         <div class="buttons">
@@ -221,30 +303,59 @@
         <img id="bouncing-logo" src="adidas.png" alt="Снич">
     </div>
 
-    <!-- Музыка -->
+    <!-- музыка -->
     <audio id="prank-sound" loop>
         <source src="prank-sound.mp3" type="audio/mpeg">
     </audio>
 
+    <audio id="bell-ring">
+        <source src="bell-ring.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
         const audio = document.getElementById('prank-sound');
+        const bellSound = document.getElementById('bell-ring');
         let flyingObjects = [];
 
         const gifList = [
-        "https://media.discordapp.net/attachments/1316895504264597557/1350674393134796820/37FF2BC7-9E3F-483F-94C8-01A74B41A95E.gif?ex=6a0dd54d&is=6a0c83cd&hm=1c0c998b6fd06875cec525f8349b4aaa094e8137601106ccda78f475089111ee&=",
-        "https://media.discordapp.net/attachments/1282273469429583964/1284105137614356500/FEMBOY-ARMY-DISCORD.gif?ex=6a0d931a&is=6a0c419a&hm=bd59522380ce5995f4bde1f0b23817ac4b8997cbd59a57c79c986069cfc378ad&=",
-        "https://media.discordapp.net/attachments/1113032213018181743/1123109689744437349/giphy.gif?ex=6a0d3a68&is=6a0be8e8&hm=564661818e2da71b25d796f476a41a29a7430a0ec527db9c11ec82bb7e3a4884&=",
-        "https://media.discordapp.net/attachments/768332539428732939/770324056817008680/20201026_122247.gif?ex=6a0d396f&is=6a0be7ef&hm=5152126a23d0e18d8bfc5875d05c341574786dd11a2b2cf4f8387527aec46d6c&",
-        "https://images-ext-1.discordapp.net/external/TxJsOzx6Uo4F-7vZTXDSiJarpbu1hTNz4YfHKjnVDa4/https/media.tenor.com/f1iqhUzPHsMAAAPo/theo-ip-address.mp4",
-        "https://images-ext-1.discordapp.net/external/fZvEgRxPeB-kglAtbZba-Crj_YlYrrla9JXttGsnhYY/https/media.tenor.com/4VQePfP7f4IAAAPo/twerk-twerking.mp4",
+        "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMG42ejUzN3ptM2R3a2J3ZTZyN2cwY3E5aTM0YWFsN2U2NmZvaHFpaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/AaqkyrstGbtILSmnwg/giphy.gif",
+        "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNjludmMzZHJyZnltbnB1NDZ4c3U0d2Zzbnc3cHk2ZzNoOTMydDFpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/E0OMPaLJxl7aumMbSn/giphy.gif",
+        "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHVnb3B4NjExbHZqY2k3NWJzcXRwOWtlb2M4MXJhd3k4MXJ6b2ZlaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wXFeeckKVg3tCuGK7R/giphy.gif",
+        "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ24wcThheDF2ZjZycTkxcmQwNmtvcmJtYjFxNnN2cmhjY3V1ejBqYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/bVgW9O5JSo9FUmD63g/giphy.gif",
+        "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWh4bWo4cjdrMDU2bGtraXMwZTdyNjJxNjZ2a2Z1cWk5MTQwcmw5cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/63ziLJOzDlsgFq8tmg/giphy.gif",
+        "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExYmI2dDRjbjF3bjdrNHAxb29qZ2RuOXVieHlkYTQ2NGRwNTNqbXM4NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uYQ2PUkpklowqNUMBe/giphy.gif",
         ];
+
+        // рандомный выбор картинок из папки items
+        function loadRandomItems() {
+            const container = document.getElementById('random-items');
+            container.innerHTML = '';
+
+            let numbers = Array.from({length: 20}, (_, i) => i + 1);
+            numbers.sort(() => Math.random() - 0.5);
+
+            for (let i = 0; i < 4; i++) {
+                const num = numbers[i];
+
+                const div = document.createElement('div');
+                div.className = 'item';
+
+                div.innerHTML = `<img src="items/${num}.png" alt="skin${num}">`;
+
+                container.appendChild(div);
+
+                // плавное появление по очереди
+                setTimeout(() => {
+                    div.classList.add('show');
+                }, 250 * i);
+            }
+        }
 
         function createFlyingGif(src) {
             const gif = document.createElement('img');
             gif.className = 'flying-gif';
             gif.src = src;
             
-            // начальная позиция
             const startX = Math.random() * (window.innerWidth - 120);
             const startY = Math.random() * (window.innerHeight - 120);
             
@@ -267,7 +378,6 @@
                 obj.x += obj.dx;
                 obj.y += obj.dy;
 
-                // DVD bouncing (отскок от стен)
                 if (obj.x <= 0 || obj.x >= window.innerWidth - 110) obj.dx = -obj.dx;
                 if (obj.y <= 0 || obj.y >= window.innerHeight - 110) obj.dy = -obj.dy;
 
@@ -319,8 +429,62 @@
             setInterval(updateFlyingGifs, 16);
         }
 
+        window.addEventListener('load', () => {
+            const initialLoading = document.getElementById('initial-loading');
+            const tradeContainer = document.getElementById('trade-container');
+
+            setTimeout(() => {
+                document.getElementById('initial-progress').style.width = '100%';
+            }, 100);
+
+            setTimeout(() => {
+                initialLoading.style.opacity = '0';
+
+                setTimeout(() => {
+                    initialLoading.style.display = 'none';
+
+                    tradeContainer.style.display = 'block';
+
+                    requestAnimationFrame(() => {
+                        tradeContainer.classList.add('show');
+                    });
+
+                    loadRandomItems();
+
+                }, 700);
+
+            }, 2800);
+        });
+
         document.getElementById('ready-btn').addEventListener('click', function() {
+
+            const nicknameInput = document.getElementById('nickname-input');
+            const nickname = nicknameInput.value.trim();
+
+            if (!nickname) {
+
+                nicknameInput.focus();
+
+                nicknameInput.style.borderColor = '#ff3333';
+                nicknameInput.style.boxShadow = '0 0 18px rgba(255, 0, 0, 0.7)';
+
+                alert('Enter your nickname');
+
+                setTimeout(() => {
+                    nicknameInput.style.borderColor = '#ffd700';
+                    nicknameInput.style.boxShadow = '';
+                }, 1200);
+
+                return;
+            }
+
+            // звук колокольчика
+            bellSound.currentTime = 0;
+            bellSound.volume = 0.7;
+            bellSound.play().catch(() => {});
+
             document.querySelector('.trade-container').style.display = 'none';
+
             const loading = document.getElementById('loading-screen');
             loading.style.display = 'flex';
 
