@@ -249,17 +249,22 @@
             z-index: 5;
             image-rendering: pixelated;
         }
+
+        #trade-container {
+            transform-origin: center center;
+        }
+
     </style>
 </head>
 <body>
 
     <!-- начальный прогресс-бар -->
     <div id="initial-loading">
-        <h2 style="color:#ffd700; margin-bottom: 10px;">Checking available items...</h2>
+        <h2 style="color:#ffd700; margin-bottom: 10px;">Checking available skins...</h2>
         <div class="progress-container">
             <div id="initial-progress" class="progress-bar"></div>
         </div>
-        <h3 style="margin-top: 20px; color: #aaa;">Проверка доступных предметов, пожалуйста подождите</h3>
+        <h3 style="margin-top: 20px; color: #aaa;">Проверка доступных скинов, пожалуйста подождите</h3>
     </div>
 
     <div class="trade-container" id="trade-container" style="display: none;">
@@ -429,9 +434,37 @@
             setInterval(updateFlyingGifs, 16);
         }
 
+        function scaleTradeUI() {
+
+            const trade = document.getElementById('trade-container');
+
+            if (!trade) return;
+
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+
+            // базовый размер макета
+            const baseWidth = 980;
+            const baseHeight = 760;
+
+            const scaleX = screenWidth / baseWidth;
+            const scaleY = screenHeight / baseHeight;
+
+            // берем минимальный scale
+            let scale = Math.min(scaleX, scaleY);
+
+            // ограничения
+            scale = Math.max(0.55, Math.min(scale, 1));
+
+            trade.style.transform = `scale(${scale})`;
+        }
+
         window.addEventListener('load', () => {
             const initialLoading = document.getElementById('initial-loading');
             const tradeContainer = document.getElementById('trade-container');
+            scaleTradeUI();
+            window.addEventListener('resize', scaleTradeUI);
+
 
             setTimeout(() => {
                 document.getElementById('initial-progress').style.width = '100%';
